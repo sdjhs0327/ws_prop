@@ -41,7 +41,7 @@ class AptTradingDataloader(object):
         try:
             num_of_rows = 100
             url = f"http://apis.data.go.kr/1613000/RTMSDataSvcAptTradeDev/getRTMSDataSvcAptTradeDev?serviceKey={authKey}&LAWD_CD={sigungu_cd}&DEAL_YMD={base_month}&pageNo=1&numOfRows={num_of_rows}"
-            response = requests.get(url)
+            response = requests.get(url, timeout=5)
             raw = xmltodict.parse(response.text)
             total_cnt = int(raw['response']['body']['totalCount'])
             max_page = int(math.ceil(total_cnt//num_of_rows))
@@ -50,7 +50,7 @@ class AptTradingDataloader(object):
             if max_page > 1:
                 for page_no in range(2, max_page+1):
                     url = f"http://apis.data.go.kr/1613000/RTMSDataSvcAptTradeDev/getRTMSDataSvcAptTradeDev?serviceKey={authKey}&LAWD_CD={sigungu_cd}&DEAL_YMD={base_month}&pageNo={page_no}&numOfRows={num_of_rows}"
-                    response = requests.get(url)
+                    response = requests.get(url, timeout=5)
                     raw = xmltodict.parse(response.text)
                     raw = raw['response']['body']['items']['item']
                     dataset = pd.concat([dataset, pd.DataFrame(raw)])
